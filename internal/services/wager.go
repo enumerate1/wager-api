@@ -8,8 +8,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/wager-api/internal/domains"
 	"github.com/wager-api/internal/entities"
+	"github.com/wager-api/internal/models"
 	"github.com/wager-api/internal/repositories"
 	"github.com/wager-api/libs/database"
 
@@ -32,7 +32,7 @@ type WagerService struct {
 	}
 }
 
-func validatePlaceWagerReq(req *domains.PlaceWagerRequest) error {
+func validatePlaceWagerReq(req *models.PlaceWagerRequest) error {
 	if req.TotalWagerValue <= 0 {
 		return fmt.Errorf("the total_wager_value must be a positive integer above 0")
 	}
@@ -53,7 +53,7 @@ func validatePlaceWagerReq(req *domains.PlaceWagerRequest) error {
 	return nil
 }
 func (s *WagerService) PlaceWager(resp http.ResponseWriter, req *http.Request) {
-	placeWagerRequest := &domains.PlaceWagerRequest{}
+	placeWagerRequest := &models.PlaceWagerRequest{}
 	err := json.NewDecoder(req.Body).Decode(&placeWagerRequest)
 	defer req.Body.Close()
 	if err != nil {
@@ -101,12 +101,12 @@ func (s *WagerService) PlaceWager(resp http.ResponseWriter, req *http.Request) {
 	resp.WriteHeader(http.StatusCreated)
 	_ = json.NewEncoder(resp).Encode(convertWagerPg2placeWagerResponse(wager))
 }
-func convertWagerPg2placeWagerResponse(wager *entities.Wager) *domains.PlaceWagerResponse {
+func convertWagerPg2placeWagerResponse(wager *entities.Wager) *models.PlaceWagerResponse {
 	var placedAt *time.Time
 	if wager.PlaceAt.Status == pgtype.Present {
 		placedAt = &wager.PlaceAt.Time
 	}
-	return &domains.PlaceWagerResponse{
+	return &models.PlaceWagerResponse{
 		ID:                  int(wager.WagerID.Int),
 		TotalWagerValue:     wager.TotalWagerValue.Float,
 		Odds:                int(wager.Odds.Int),
@@ -119,12 +119,12 @@ func convertWagerPg2placeWagerResponse(wager *entities.Wager) *domains.PlaceWage
 	}
 }
 
-func convertWagerPg2Domain(wager *entities.Wager) *domains.Wager {
+func convertWagerPg2Domain(wager *entities.Wager) *models.Wager {
 	var placedAt *time.Time
 	if wager.PlaceAt.Status == pgtype.Present {
 		placedAt = &wager.PlaceAt.Time
 	}
-	return &domains.Wager{
+	return &models.Wager{
 		ID:                  int(wager.WagerID.Int),
 		TotalWagerValue:     wager.TotalWagerValue.Float,
 		Odds:                int(wager.Odds.Int),
@@ -137,14 +137,14 @@ func convertWagerPg2Domain(wager *entities.Wager) *domains.Wager {
 	}
 }
 
-func validateBuyWagerReq(req *domains.BuyWagerRequest) error {
+func validateBuyWagerReq(req *models.BuyWagerRequest) error {
 	if req.BuyingPrice <= 0 {
 		return fmt.Errorf("the buying_price must be a positive decimal")
 	}
 	return nil
 }
 func (s *WagerService) BuyWager(resp http.ResponseWriter, req *http.Request) {
-	buyWagerRequest := &domains.BuyWagerRequest{}
+	buyWagerRequest := &models.BuyWagerRequest{}
 	err := json.NewDecoder(req.Body).Decode(&buyWagerRequest)
 	defer req.Body.Close()
 	if err != nil {
@@ -237,8 +237,8 @@ func (s *WagerService) BuyWager(resp http.ResponseWriter, req *http.Request) {
 	_ = json.NewEncoder(resp).Encode(convert2BuyWagerResponse(purchaseRecord))
 }
 
-func convert2BuyWagerResponse(purchase *entities.Purchase) *domains.BuyWagerResponse {
-	return &domains.BuyWagerResponse{
+func convert2BuyWagerResponse(purchase *entities.Purchase) *models.BuyWagerResponse {
+	return &models.BuyWagerResponse{
 		PurchaseID:  int(purchase.PurchaseID.Int),
 		WagerID:     int(purchase.WagerID.Int),
 		BuyingPrice: purchase.BuyingPrice.Float,
@@ -296,10 +296,10 @@ func (s *WagerService) ListWager(resp http.ResponseWriter, req *http.Request) {
 		})
 		return
 	}
-	wagerDomains := make([]*domains.Wager, 0, len(wagers))
+	wagermodels := make([]*models.Wager, 0, len(wagers))
 	for _, wager := range wagers {
-		wagerDomains = append(wagerDomains, convertWagerPg2Domain(wager))
+		wagermodels = append(wagermodels, convertWagerPg2Domain(wager))
 	}
 	resp.WriteHeader(http.StatusOK)
-	_ = json.NewEncoder(resp).Encode(wagerDomains)
+	_ = json.NewEncoder(resp).Encode(wagermodels)
 }

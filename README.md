@@ -6,15 +6,15 @@
 ├── configs             # config for different env (for simple, I only add one config)
 │   └── ...
 ├── internal
-│   ├── domains         # define model for request-response usage
+│   ├── models          # define model for request-response usage
 │   ├── entities        # define model for struct in database
 │   ├── repositorires   # storage interface
 │   │   └── ...         # storage implementation
 │   └── service         # define and implement service
 ├── libs                # internal libs
 ├── start.sh            # using it to run the app.
-├── mock            # mock/stub for testing
-├── test            # integration tests
+├── mock                # mock/stub for testing
+├── integration_test    # integration tests
 ```
 
 ### Run

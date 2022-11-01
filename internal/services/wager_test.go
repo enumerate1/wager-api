@@ -11,8 +11,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
-	"github.com/wager-api/internal/domains"
 	"github.com/wager-api/internal/entities"
+	"github.com/wager-api/internal/models"
 	"github.com/wager-api/libs/database"
 	mock_database "github.com/wager-api/mocks/libs/database"
 	mock_repositories "github.com/wager-api/mocks/repositories"
@@ -35,21 +35,21 @@ func Test_validatePlaceWagerReq(t *testing.T) {
 	t.Parallel()
 	type testcase struct {
 		name          string
-		placeWagerReq *domains.PlaceWagerRequest
+		placeWagerReq *models.PlaceWagerRequest
 		expectedErr   error
 	}
 	tests := []testcase{
 		{
 			name:        "total_wager_value = 0",
 			expectedErr: fmt.Errorf("the total_wager_value must be a positive integer above 0"),
-			placeWagerReq: &domains.PlaceWagerRequest{
+			placeWagerReq: &models.PlaceWagerRequest{
 				TotalWagerValue: 0,
 			},
 		},
 		{
 			name:        "odds = 0",
 			expectedErr: fmt.Errorf("the odds must be a positive integer above 0"),
-			placeWagerReq: &domains.PlaceWagerRequest{
+			placeWagerReq: &models.PlaceWagerRequest{
 				TotalWagerValue: 10,
 				Odds:            0,
 			},
@@ -57,7 +57,7 @@ func Test_validatePlaceWagerReq(t *testing.T) {
 		{
 			name:        "selling_percentage out of range [1, 100]",
 			expectedErr: fmt.Errorf("the selling_percentage must be specified as an integer between 1 and 100"),
-			placeWagerReq: &domains.PlaceWagerRequest{
+			placeWagerReq: &models.PlaceWagerRequest{
 				TotalWagerValue:   10,
 				Odds:              20,
 				SellingPercentage: 110,
@@ -66,7 +66,7 @@ func Test_validatePlaceWagerReq(t *testing.T) {
 		{
 			name:        "selling_price have more than 2 decimal places out of range [1, 100]",
 			expectedErr: fmt.Errorf("the selling_price must be a positive decimal value to two decimal places"),
-			placeWagerReq: &domains.PlaceWagerRequest{
+			placeWagerReq: &models.PlaceWagerRequest{
 				TotalWagerValue:   10,
 				Odds:              20,
 				SellingPercentage: 50,
@@ -76,7 +76,7 @@ func Test_validatePlaceWagerReq(t *testing.T) {
 		{
 			name:        "selling_price lesser than total_wager_value * (selling_percentage / 100)",
 			expectedErr: fmt.Errorf("selling_price must be greater than total_wager_value * (selling_percentage / 100)"),
-			placeWagerReq: &domains.PlaceWagerRequest{
+			placeWagerReq: &models.PlaceWagerRequest{
 				TotalWagerValue:   10,
 				Odds:              20,
 				SellingPercentage: 50,
@@ -98,14 +98,14 @@ func Test_validateBuyWagerReq(t *testing.T) {
 	// t.Parallel()
 	type testcase struct {
 		name        string
-		buyWagerReq *domains.BuyWagerRequest
+		buyWagerReq *models.BuyWagerRequest
 		expectedErr error
 	}
 	tests := []testcase{
 		{
 			name:        "buying_price less or equal to 0",
 			expectedErr: fmt.Errorf("the buying_price must be a positive decimal"),
-			buyWagerReq: &domains.BuyWagerRequest{
+			buyWagerReq: &models.BuyWagerRequest{
 				BuyingPrice: 0,
 			},
 		},
@@ -299,7 +299,7 @@ func Test_ListWager(t *testing.T) {
 		{
 			ctx:          ctx,
 			name:         "happy case",
-			expectedResp: []byte(`[{"id":1,"total_wager_value":100},{"id":2,"total_wager_value":100}]`),
+			expectedResp: []byte(`[{"id":1,"total_wager_value":100,"odds":0,"selling_percentage":0,"selling_price":0,"current_selling_price":0,"percentage_sold":0,"amount_sold":0,"placed_at":null},{"id":2,"total_wager_value":100,"odds":0,"selling_percentage":0,"selling_price":0,"current_selling_price":0,"percentage_sold":0,"amount_sold":0,"placed_at":null}]`),
 			// work in both cases /wagers?page=:4&limit=:4 and /wagers?page=4&limit=4
 			url:            "/wagers?page=:4&limit=:4",
 			expectedStatus: http.StatusOK,
