@@ -152,9 +152,6 @@ func TestMain(m *testing.M) {
 			fmt.Sprintf("postgres://postgres:password@localhost:%s/%s?sslmode=disable", resource.GetPort("5432/tcp"), "postgres"),
 		)
 		if err := migrate.Up(); err != nil {
-			// log.Println(err)
-			// log.Println(os.Getwd())
-
 			return err
 		}
 		wagerService := &services.WagerService{

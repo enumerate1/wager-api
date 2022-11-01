@@ -17,11 +17,9 @@ type WagerRepo struct{}
 func (r *WagerRepo) Create(ctx context.Context, db database.Ext, wager *entities.Wager) error {
 	command := `INSERT INTO %s (%s) VALUES (%s) RETURNING wager_id`
 	fieldNames := database.GetFieldNamesExcepts(wager, []string{"wager_id"})
-	fmt.Println("===internal", fieldNames, len(fieldNames))
 	placeHolders := database.GeneratePlaceholders(len(fieldNames))
 	ultimateCmd := fmt.Sprintf(command, wager.TableName(), strings.Join(fieldNames, ","), placeHolders)
 	args := database.GetScanFields(wager, fieldNames)
-	fmt.Println("args", args)
 	if err := db.QueryRow(ctx, ultimateCmd, args...).Scan(&wager.WagerID); err != nil {
 		return err
 	}

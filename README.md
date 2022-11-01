@@ -59,6 +59,6 @@
 - Add adaptive checking solution  to validate `selling_price` 
 - Add adative solution paging to save cost, not full scan DB. (if can, use the lastID from previous request and sort by desc (lastest first.. but out of scope so I omit it))
 ### If I have more time:
-- Write more test to cover, especially egde cases
+- Write more test to cover, especially concurrently case
 - Customize the error message to DRY
 - Research deep in biz logic of betting

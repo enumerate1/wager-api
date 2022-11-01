@@ -103,10 +103,17 @@ func Test_validateBuyWagerReq(t *testing.T) {
 	}
 	tests := []testcase{
 		{
-			name:        "buying_price less or equal to 0",
+			name:        "buying_price equal to 0",
 			expectedErr: fmt.Errorf("the buying_price must be a positive decimal"),
 			buyWagerReq: &models.BuyWagerRequest{
 				BuyingPrice: 0,
+			},
+		},
+		{
+			name:        "buying_price less than 0",
+			expectedErr: fmt.Errorf("the buying_price must be a positive decimal"),
+			buyWagerReq: &models.BuyWagerRequest{
+				BuyingPrice: -20,
 			},
 		},
 	}
@@ -114,7 +121,6 @@ func Test_validateBuyWagerReq(t *testing.T) {
 		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			err := validateBuyWagerReq(tc.buyWagerReq)
-			fmt.Println("===err", err)
 			assert.Equal(t, tc.expectedErr, err)
 
 		})
