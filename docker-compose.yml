@@ -1,0 +1,31 @@
+version: "3.4"
+services:
+  wager-api:
+    build:
+      context: .
+      dockerfile: ./dockerfile
+    ports:
+      - 8080:8080
+    # env_file:
+    #   - ./cmd/app/env/app.env
+    depends_on:
+      - db
+    volumes:
+      - ./tests/report:/src/go/tests/report
+  db:
+    image: postgres:14-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    healthcheck:
+      test: ["CMD-SHELL","pg_isready -U postgres"]
+      timeout: 40s
+      interval: 10s
+      retries: 10
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./postgres/init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
+
+
+

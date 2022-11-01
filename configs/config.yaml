@@ -1,0 +1,15 @@
+app_env: "local"
+service: "prophet"
+log_level: info
+postgres:
+      # username: "postgres"
+      # password: "example"
+      # host: "localhost"
+      # port: "5432"
+      # db_name: "postgres"
+      connection: postgres://postgres:password@db:5432/postgres?sslmode=disable
+      max_conns: 8
+      log_level: debug
+      retry_count: 10
+      retry_interval: 5s
+address: :8080
