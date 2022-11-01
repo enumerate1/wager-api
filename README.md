@@ -58,6 +58,7 @@
 - Add config (with file - just easy for testing) - after load config file, it will overwrite the variable environment, so this project still abide by 12factor https://12factor.net/ .P/s: Again the config file just save the infomation for quick run, when in production, use variable environment.
 - Add adaptive checking solution  to validate `selling_price` 
 - Add adative solution paging to save cost, not full scan DB. (if can, use the lastID from previous request and sort by desc (lastest first.. but out of scope so I omit it))
+- Paging works in both cases `/wagers?page=:page&limit=:limit` (like the requirement) or `/wagers?page=page&limit=limit` (normal)
 ### If I have more time:
 - Write more test to cover, especially concurrently case
 - Customize the error message to DRY
