@@ -18,13 +18,13 @@ func Init() *chi.Mux {
 // InitWithLogger init with zap log param
 func InitWithLogger(logger *zap.Logger) *chi.Mux {
 	router := chi.NewRouter()
-	router.Use(ChiLogger(logger))
+	router.Use(ChiLoggerMiddleware(logger))
 	router.Use(render.SetContentType(render.ContentTypeJSON))
 	return router
 }
 
 // ChiLogger is a middleware logger for go-chi
-func ChiLogger(l *zap.Logger) func(next http.Handler) http.Handler {
+func ChiLoggerMiddleware(l *zap.Logger) func(next http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		fn := func(w http.ResponseWriter, r *http.Request) {
 			t1 := time.Now()

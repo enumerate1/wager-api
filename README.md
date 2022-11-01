@@ -21,6 +21,31 @@
 - Run `bash ./start.sh` to start the application
 - In case you're using `docker compose v2`, please using run `bash ./startv2.sh` (not yet test this command)
 - Unit test: `make unit-test`
+### Manual test
+- Pre-condition: must run `bash ./start.sh`
+- Test PlaceWager, example:
+ ```
+    curl --location --request POST 'localhost:8080/wagers' \
+    --header 'Content-Type: application/json' \
+    --data-raw '{
+        "total_wager_value": 20,
+        "odds": 30,
+        "selling_percentage": 30,
+        "selling_price": 50
+    }'
+```
+- Test BuyWager (must call several times the PlaceWager, example:
+```
+    curl --location --request POST 'localhost:8080/buy/1' \
+    --header 'Content-Type: application/json' \
+    --data-raw '{
+        "buying_price": 6
+    }'
+```
+- Test ListWager (must call several times the PlaceWager, example:
+```
+    curl --location --request GET 'localhost:8080/wagers?page=:1&limit=:4'
+```
 
 ### Cool items:
 - In postgres the `transaction_level default = read commited`, using lock row to lock the `wager record` when calling `buy wager` to avoid race condition. Using this way, we can easy scale when need improve throughput.
