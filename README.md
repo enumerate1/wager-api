@@ -20,6 +20,8 @@
 ### Run
 - Run `bash ./start.sh` to start the application
 - In case you're using `docker compose v2`, please using run `bash ./startv2.sh` (not yet test this command)
+- I disable expose port `5432`, you can uncomment in `docker-compose.yaml`, to avoid conflict in your machine
+- You can add ENV variable also to avoid leak secret.
 - Unit test: `make unit-test`
 ### Manual test
 - Pre-condition: must run `bash ./start.sh`
