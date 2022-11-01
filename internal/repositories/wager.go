@@ -63,7 +63,7 @@ func (r *WagerRepo) Get(ctx context.Context, db database.Ext, wagerID pgtype.Int
 	return wagerEnt, nil
 }
 
-func (r *WagerRepo) List(ctx context.Context, db database.QueryExecer, lastID pgtype.Int4, limit uint32) ([]*entities.Wager, error) {
+func (r *WagerRepo) List(ctx context.Context, db database.Ext, lastID pgtype.Int4, limit uint32) ([]*entities.Wager, error) {
 	b := &entities.Wager{}
 	fieldName, _ := b.FieldMap()
 	query := fmt.Sprintf("SELECT %s FROM %s WHERE ($1::INT IS NULL OR wager_id>$1) ORDER BY wager_id LIMIT $2 ", strings.Join(fieldName, ", "), b.TableName())

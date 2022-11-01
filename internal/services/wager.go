@@ -25,7 +25,7 @@ type WagerService struct {
 		Create(ctx context.Context, db database.Ext, wager *entities.Wager) error
 		Update(ctx context.Context, db database.Ext, wager *entities.Wager) (pgconn.CommandTag, error)
 		Get(ctx context.Context, db database.Ext, wagerID pgtype.Int4, queryEnhancers ...repositories.QueryEnhancer) (*entities.Wager, error)
-		List(ctx context.Context, db database.QueryExecer, lastID pgtype.Int4, limit uint32) ([]*entities.Wager, error)
+		List(ctx context.Context, db database.Ext, lastID pgtype.Int4, limit uint32) ([]*entities.Wager, error)
 	}
 	PurchaseRepo interface {
 		Create(ctx context.Context, db database.Ext, purchase *entities.Purchase) error
@@ -253,6 +253,7 @@ func roundFloat(number float32) float32 {
 }
 
 func validateListWagerParam(req *http.Request) error {
+
 	ctx := req.Context()
 	var page, limit int
 
