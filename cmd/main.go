@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"net/http"
 
@@ -48,6 +47,6 @@ func main() {
 	// logging.Logger.Infof("Listening at %s", cfg.Address)
 	err = http.ListenAndServe(cfg.Address, mux)
 	if err != nil {
-		fmt.Println("====err", err)
+		logs.Logger.Fatal("service crashing... :8080")
 	}
 }
