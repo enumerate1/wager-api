@@ -98,7 +98,6 @@ func (s *WagerService) PlaceWager(resp http.ResponseWriter, req *http.Request) {
 		})
 		return
 	}
-	// resp.Header().Set("Content-Type", "application/json")
 	resp.WriteHeader(http.StatusCreated)
 	_ = json.NewEncoder(resp).Encode(convertWagerPg2placeWagerResponse(wager))
 }
@@ -301,7 +300,6 @@ func (s *WagerService) ListWager(resp http.ResponseWriter, req *http.Request) {
 	for _, wager := range wagers {
 		wagerDomains = append(wagerDomains, convertWagerPg2Domain(wager))
 	}
-	resp.Header().Set("Content-Type", "application/json")
 	resp.WriteHeader(http.StatusOK)
 	_ = json.NewEncoder(resp).Encode(wagerDomains)
 }

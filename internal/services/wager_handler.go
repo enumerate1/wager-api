@@ -15,7 +15,7 @@ type WagerHandler struct {
 }
 
 // to handle the request params for handling a paginated request.
-func paginate(next http.Handler) http.Handler {
+func paginateMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		page := r.URL.Query().Get("page")
 		limit := r.URL.Query().Get("limit")
@@ -33,7 +33,6 @@ func paginate(next http.Handler) http.Handler {
 		if page != "" {
 			intPage, err = strconv.Atoi(page)
 			if err != nil {
-				w.Header().Set("Content-Type", "application/json")
 				w.WriteHeader(http.StatusBadRequest)
 				_ = json.NewEncoder(w).Encode(map[string]string{
 					"error": "unable to extract page value",
@@ -44,7 +43,6 @@ func paginate(next http.Handler) http.Handler {
 		if limit != "" {
 			intLimit, err = strconv.Atoi(limit)
 			if err != nil {
-				w.Header().Set("Content-Type", "application/json")
 				w.WriteHeader(http.StatusBadRequest)
 				_ = json.NewEncoder(w).Encode(map[string]string{
 					"error": "unable to extract limit value",
@@ -58,22 +56,13 @@ func paginate(next http.Handler) http.Handler {
 	})
 }
 
-//	func extractWagerID(next http.Handler) http.Handler {
-//		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-//			// page := r.URL.Query().Get("page")
-//			// ctx = context.WithValue(ctx, "wager_id", intLimit)
-//			// next.ServeHTTP(w, r.WithContext(ctx))
-//		})
-//	}
-func extractWagerID(next http.Handler) http.Handler {
+func extractWagerIDMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		var err error
 		var wagerIDInt int
 		if wagerID := chi.URLParam(r, "wagerID"); wagerID != "" {
 			wagerIDInt, err = strconv.Atoi(wagerID)
 			if err != nil {
-
-				w.Header().Set("Content-Type", "application/json")
 				w.WriteHeader(http.StatusBadRequest)
 				_ = json.NewEncoder(w).Encode(map[string]string{
 					"error": "unable to extract limit value",
@@ -86,6 +75,12 @@ func extractWagerID(next http.Handler) http.Handler {
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
+func setContentTypeMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Add("Content-Type", "application/json")
+		next.ServeHTTP(w, r)
+	})
+}
 
 func NewWagerHandler(mux *chi.Mux, wagerService *WagerService) {
 	handler := &WagerHandler{
@@ -93,13 +88,11 @@ func NewWagerHandler(mux *chi.Mux, wagerService *WagerService) {
 	}
 	// StripSlashes remove redundant slash in endpoint, example /login/ -> /login
 	mux.Use(middleware.StripSlashes)
+	mux.Use(setContentTypeMiddleware)
 
 	mux.Group(func(r chi.Router) {
-		// r.Use(handler.authMiddleware)
 		r.Post("/wagers", handler.WagerService.PlaceWager)
-		r.With(extractWagerID).Post("/buy/{wagerID}", handler.WagerService.BuyWager)
-		r.With(paginate).Get("/wagers", handler.WagerService.ListWager)
-		// r.Get("/wagers", handler.WagerService.ListWager)
-
+		r.With(extractWagerIDMiddleware).Post("/buy/{wagerID}", handler.WagerService.BuyWager)
+		r.With(paginateMiddleware).Get("/wagers", handler.WagerService.ListWager)
 	})
 }
