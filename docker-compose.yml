@@ -6,12 +6,8 @@ services:
       dockerfile: ./dockerfile
     ports:
       - 8080:8080
-    # env_file:
-    #   - ./cmd/app/env/app.env
     depends_on:
       - db
-    volumes:
-      - ./tests/report:/src/go/tests/report
   db:
     image: postgres:14-alpine
     environment:
