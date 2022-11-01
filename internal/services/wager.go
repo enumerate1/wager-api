@@ -80,7 +80,7 @@ func (s *WagerService) PlaceWager(resp http.ResponseWriter, req *http.Request) {
 		wager.Odds.Set(placeWagerRequest.Odds),
 		wager.SellingPercentage.Set(placeWagerRequest.SellingPercentage),
 		wager.SellingPrice.Set(placeWagerRequest.SellingPrice),
-		wager.CurrentSellingPrice.Set(placeWagerRequest.SellingPercentage),
+		wager.CurrentSellingPrice.Set(placeWagerRequest.SellingPrice),
 		wager.PlaceAt.Set(now),
 		wager.CreatedAt.Set(now),
 		wager.UpdatedAt.Set(now),
